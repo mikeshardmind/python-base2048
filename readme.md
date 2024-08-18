@@ -109,8 +109,8 @@ If you do, feel free to let me know, and I may link back to you.
 - This is being used to transmit public keys
   (Implementation details have not been shared at this time)
 
-- This is used by [Wakforge](https://wakforge.org) to allow users their
-  share customized builds with eachother in chat apps.
+- This is used by [Wakforge](https://wakforge.org) to allow users to
+  share customized builds with each other in chat apps.
 
 
 ### What's this binary blob in the wheel?
