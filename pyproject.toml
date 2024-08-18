@@ -1,5 +1,5 @@
 [tool.pyright]
-include = ["base2048/**", "object_generation/**"]
+include = ["base2048/**"]
 typeCheckingMode = "strict"
 pythonVersion = "3.9"
 
