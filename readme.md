@@ -38,16 +38,28 @@ contact me regarding your use case.
 
 The library provides two public functions: encode and decode.
 
-encode turns bytes into strings
-decode reverses this
+encode turns bytes into encoded strings, decode reverses this.
 
+These functions are one-shot and do not offer any options or configuration.
 
+```py
+>>> import base2048
+>>> base2048.encode(b"data")
+'Ҽĝġ'
+>>> base2048.decode('Ҽĝġ')
+b'data'
+```
 
 
 ### typed?
 
-The library provides typings that work with pyright and mypy. The assumption is that they also
-work with pyre and pytype, however this has not been tested as each of these type checkers
+The library provides typings that are known to work with pyright and mypy.
+The assumption is that they also work with pyre and pytype based on the typing conformance suite,
+however this has not been tested.
+
+CI is set up to test library typings using pyright. any issues that arise with other type checkers
+are most likely an issue with those type checkers, but feel free to open an issue if this breaks your
+use in typed code.
 
 ### Why?
 
@@ -55,8 +67,9 @@ Sometimes you need to transfer data as text. base2048 with modern operating syst
 is safe to assume it will display fine, and compares favorably with other
 binary-text encodings on a few factors
 
+
 | encoding     | bits/character\* | markdown-safe | url-safe | requires byte padding\*\* |
-|--------------|-------------  ---|---------------|----------|---------------------------|
+| ------------ | ---------------- | ------------- | -------- | ------------------------- |
 | base64       | 6                | yes           | no       | yes                       |
 | base85\*\*\* | 6.4              | no            | no       | yes                       |
 | base2048     | 11               | yes           | yes      | no                        |
@@ -123,9 +136,10 @@ used in a cli tool that does not always end up using it, you may want to import 
 only within the scope it is used.
 
 - This was negligibly slower than the rust bindings in a naive benchmark on python3.11.
-comparing use on 3.10 + pypy vs the rust bindings on cpython 3.11 (no pypi wheel or sdist available),
-this with pypy was negligibly faster. further benchmarking will be required to make any
-conclusive statements.
+comparing use on 3.10 + pypy vs the rust bindings on cpython 3.11
+(no pypi wheel, and the source distribution failed to build on pypi),
+this implementation with pypy was negligibly faster.
+further benchmarking will be required to make any conclusive statements.
 
 - Due to the nature of how this functions, and the ffi barrier when using a rust crate,
 you should perform benchmarking on data representative of your own use if this is a

@@ -53,7 +53,8 @@ name="mikeshardmind-base2048"
 license = "MPL-2.0"
 requires-python = ">=3.9"
 authors = [{ name = "Michael Hall", email = "michael@michaelhall.tech" }]
-readme = "readme.md"
+description = "Pure python Base-2048 binary-text encoding"
+readme = {file = "readme.md", content-type = "text/markdown"}
 dynamic = ["version"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
