@@ -29,9 +29,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-        sparse-checkout: |
-          pyproject.toml
-          base2048
+          sparse-checkout: |
+            pyproject.toml
+            base2048
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
