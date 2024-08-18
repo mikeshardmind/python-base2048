@@ -7,10 +7,10 @@ The encoding map used is compatible with libraries available in
 [Rust](https://github.com/LLFourn/rust-base2048) and
 [js (with jsdoc typings)](https://www.npmjs.com/package/@mikeshardmind/base2048)
 
-
-[The original python implementation](https://github.com/ionite34/base2048) this is
-intended to replace binds to the rust crate, which may make it marginally faster on
-some platforms, but makes it less portable and harder to use in vendoring situations.
+[The original python implementation](https://github.com/ionite34/base2048) which
+this is intended to replace binds to the rust crate, which may make it marginally
+faster on some platforms, but makes it less portable
+and harder to use in vendoring situations.
 
 The encoding map used is **not** compatible with the
 [original implementation of the idea in js](https://github.com/qntm/base2048)
@@ -78,14 +78,12 @@ binary-text encodings on a few factors
 \* for each of these encodings, this is the optimal bits/character. Whether or not
     you end up with *Wasted* characters will depend on if the encoding requires
     padding and if so, whether or not your data requires it.
-
-    base2048 has a dedicated set of characters used for residual bits to avoid
+    Base2048 has a dedicated set of characters used for residual bits to avoid
     padding. This means no extra characters are ever spent over the bits/character
     estimate.
 
 \*\* All of the compared encodings are byte-aligned, and do not have a means to
     transfer arbitrary bit-length data.
-
 
 \*\*\* The original base85 is not markdown-safe or url-safe. There are variants
     of it which are at least markdown safe, but none of the common variants are,
