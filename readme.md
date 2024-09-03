@@ -72,7 +72,7 @@ binary-text encodings on a few factors
 | ------------ | ---------------- | ------------- | -------- | ------------------------- |
 | base64       | 6                | yes           | no       | yes                       |
 | base85\*\*\* | 6.4              | no            | no       | yes                       |
-| base2048     | 11               | yes           | yes      | no                        |
+| base2048     | 11               | yes           | no       | no                        |
 
 
 \* for each of these encodings, this is the optimal bits/character. Whether or not
