@@ -8,8 +8,8 @@ Copyright (C) 2023 Michael Hall <https://github.com/mikeshardmind>
 
 from __future__ import annotations
 
+import lzma
 import struct
-import zlib
 from collections import deque
 from collections.abc import Iterable
 from functools import lru_cache
@@ -19,9 +19,9 @@ from pathlib import Path
 
 @lru_cache
 def load_data() -> tuple[tuple[int, ...], tuple[str, ...]]:
-    with Path(__file__).with_name("b2048.zlib").open(mode="rb") as fp:
+    with Path(__file__).with_name("b2048.data").open(mode="rb") as fp:
         data = fp.read()
-    decomp = zlib.decompress(data, wbits=-15)
+    decomp = lzma.decompress(data, format=lzma.FORMAT_XZ)
     di = struct.unpack_from("!4340H", decomp, 0)
     ei = tuple(map(chr, struct.unpack_from("!2048H", decomp, 8680)))
     return di, ei

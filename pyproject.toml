@@ -77,7 +77,7 @@ build-backend = "hatchling.build"
 path = "base2048/__init__.py"
 
 [tool.hatch.build]
-artifacts = ["*.zlib"]
+artifacts = ["*.data"]
 
 [tool.hatch.build.targets.wheel]
 include = [

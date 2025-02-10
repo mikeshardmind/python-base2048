@@ -12,8 +12,8 @@ Copyright (C) 2023 Michael Hall <https://github.com/mikeshardmind>
 # This file should *never* need regeneration, it's lookup tables for a stable
 # encoding
 
+import lzma
 import struct
-import zlib
 from pathlib import Path
 
 from .dec_table import dec
@@ -22,7 +22,8 @@ from .enc_table import enc
 
 def write_data() -> None:
     packed = struct.pack("!4340H2048H", *dec, *map(ord, enc))
-    compressobj = zlib.compressobj(level=9, wbits=-15)
-    compressed = compressobj.compress(packed) + compressobj.flush()
-    with Path(__file__).with_name("b2048.zlib").open(mode="wb") as fp:
+    compressed = lzma.compress(
+        packed, preset=lzma.PRESET_EXTREME, format=lzma.FORMAT_XZ, check=lzma.CHECK_NONE
+    )
+    with Path(__file__).with_name("b2048.data").open(mode="wb") as fp:
         fp.write(compressed)
