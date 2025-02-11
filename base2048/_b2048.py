@@ -12,22 +12,18 @@ import lzma
 import struct
 from collections import deque
 from collections.abc import Iterable
-from functools import lru_cache
 from io import StringIO
 from pathlib import Path
 
+with Path(__file__).with_name("b2048.data").open(mode="rb") as fp:
+    data = fp.read()
+decomp = lzma.decompress(data, format=lzma.FORMAT_XZ)
 
-@lru_cache
-def load_data() -> tuple[tuple[int, ...], tuple[str, ...]]:
-    with Path(__file__).with_name("b2048.data").open(mode="rb") as fp:
-        data = fp.read()
-    decomp = lzma.decompress(data, format=lzma.FORMAT_XZ)
-    di = struct.unpack_from("!4340H", decomp, 0)
-    ei = tuple(map(chr, struct.unpack_from("!2048H", decomp, 8680)))
-    return di, ei
+_DEC_TABLE: tuple[int, ...] = struct.unpack_from("!4340H", decomp, 0)
+_ENC_TABLE = tuple(map(chr, struct.unpack_from("!2048H", decomp, 8680)))
 
-
-_DEC_TABLE, _ENC_TABLE = load_data()
+del data
+del decomp
 
 
 class Peekable:
@@ -58,7 +54,7 @@ class Peekable:
 
 TAIL = ("།", "༎", "༏", "༐", "༑", "༆", "༈", "༒")
 
-ZERO_SET = {idx for idx, value in enumerate(load_data()[0]) if value == 0xFFFF}
+ZERO_SET = {idx for idx, value in enumerate(_DEC_TABLE) if value == 0xFFFF}
 
 
 class DecodeError(Exception):
