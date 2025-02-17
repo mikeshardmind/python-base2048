@@ -12,18 +12,27 @@ import lzma
 import struct
 from collections import deque
 from collections.abc import Iterable
+from functools import cache
 from io import StringIO
 from pathlib import Path
 
-with Path(__file__).with_name("b2048.data").open(mode="rb") as fp:
-    data = fp.read()
-decomp = lzma.decompress(data, format=lzma.FORMAT_XZ)
+__all__ = ("decode", "encode")
 
-_DEC_TABLE: tuple[int, ...] = struct.unpack_from("!4340H", decomp, 0)
-_ENC_TABLE = tuple(map(chr, struct.unpack_from("!2048H", decomp, 8680)))
 
-del data
-del decomp
+@cache
+def _get_data() -> tuple[tuple[int, ...], tuple[str, ...]]:
+
+    with lzma.open(
+        Path(__file__).with_name("b2048.data"),
+        mode="rb",
+        format=lzma.FORMAT_XZ,
+    ) as fp:
+        data = fp.read()
+
+    DEC_TABLE: tuple[int, ...] = struct.unpack_from("!4340H", data, 0)
+    ENC_TABLE = tuple(map(chr, struct.unpack_from("!2048H", data, 8680)))
+
+    return DEC_TABLE, ENC_TABLE
 
 
 class Peekable:
@@ -31,7 +40,7 @@ class Peekable:
         self._it = iter(iterable)
         self._cache: deque[tuple[int, str]] = deque()
 
-    def __iter__(self):
+    def __iter__(self) -> Peekable:
         return self
 
     def has_more(self) -> bool:
@@ -46,7 +55,7 @@ class Peekable:
             self._cache.append(next(self._it))
         return self._cache[0]
 
-    def __next__(self):
+    def __next__(self) -> tuple[int, str]:
         if self._cache:
             return self._cache.popleft()
         return next(self._it)
@@ -54,7 +63,7 @@ class Peekable:
 
 TAIL = ("།", "༎", "༏", "༐", "༑", "༆", "༈", "༒")
 
-ZERO_SET = {idx for idx, value in enumerate(_DEC_TABLE) if value == 0xFFFF}
+ZERO_SET = {idx for idx, value in enumerate(_get_data()[0]) if value == 0xFFFF}
 
 
 class DecodeError(Exception):
@@ -62,29 +71,41 @@ class DecodeError(Exception):
 
 
 def encode(bys: bytes, /) -> str:
+    """Encode data as base2048."""
     ret = StringIO()
     stage = 0
     remaining = 0
+
+    enc_table = _get_data()[1]
 
     for byte in bys:
         need = 11 - remaining
         if need < 8:
             remaining = 8 - need
             index = (stage << need) | (byte >> remaining)
-            ret.write(_ENC_TABLE[index])
+            ret.write(enc_table[index])
             stage = byte & ((1 << remaining) - 1)
         else:
             stage = (stage << 8) | byte
             remaining += 8
 
     if remaining > 0:
-        ret.write(TAIL[stage] if remaining <= 3 else _ENC_TABLE[stage])
+        ret.write(TAIL[stage] if remaining <= 3 else enc_table[stage])
 
     ret.seek(0)
     return ret.read()
 
 
 def decode(string: str, /) -> bytes:
+    """Decode base2048 string as raw bytes
+
+    Raises
+    ------
+    DecodeError
+        Not a well-formed base2048 string
+    """
+    dec_table = _get_data()[0]
+
     ret: list[int] = []
     remaining = 0
     stage = 0
@@ -121,7 +142,7 @@ def decode(string: str, /) -> bytes:
                     msg = f"Invalid tail character {i}: [{c}]"
                     raise DecodeError(msg)
         else:
-            new_bits = _DEC_TABLE[numeric]
+            new_bits = dec_table[numeric]
             n_new_bits = 11 if chars.has_more() else 11 - residue
 
         remaining += n_new_bits
