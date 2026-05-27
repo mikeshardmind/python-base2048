@@ -115,12 +115,13 @@ If you do, feel free to let me know, and I may link back to you.
 
 ### What's this binary blob in the wheel?
 
-It's a zlib compressed character map to reduce the installed package size on disk
+It's a compressed character map to reduce the installed package size on disk
 and over network, The file's contents should not change so long as the same character map is used.
 
-It's handled via zlib decompression followed by struct unpacking with a strict
+It's handled via decompression followed by struct unpacking with a strict
 format specifier, malicious replacement's worst case would require a vulnerability
-in zlib or python. You can verify the expected output yourself by generating it the same
+in either the underlying compression library or python.
+You can verify the expected output yourself by generating it the same
 way I did, with object_generation/gen.py
 
 
